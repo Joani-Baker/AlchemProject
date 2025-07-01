@@ -15,7 +15,6 @@ export default function WordSelection(onCustomPropertySaved) {
     "unrestricted",
     "unconfidential",
     "unsanctioned",
-    "unsanctioned",
     "unprohibited",
 ];
 

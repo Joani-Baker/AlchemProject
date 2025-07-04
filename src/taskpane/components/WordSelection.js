@@ -1,4 +1,6 @@
-export default function WordSelection(onCustomPropertySaved) {
+import { useState, useEffect } from "react";
+
+export default async function WordSelection(onCustomPropertySaved) {
   
     const keywords = [
     "security",
@@ -18,7 +20,7 @@ export default function WordSelection(onCustomPropertySaved) {
     "unprohibited",
 ];
 
-    Word.run(async (context) => {
+    return Word.run(async (context) => {
         const paragraphs = context.document.body.paragraphs;
         paragraphs.load("items");
 
@@ -34,11 +36,11 @@ export default function WordSelection(onCustomPropertySaved) {
         // Find paragraphs with target keywords
         paragraphs.items.forEach((para, index) => {
             const text = para.text.toLowerCase();
-
             const matchedWords = keywords.filter((word) => text.includes(word));
             if (matchedWords.length >0){
-                matches.push({ paragraph: para, index });
-                foundWords.push(...matchedWords)
+                matches.push({ paragraph: para.text, index });
+                foundWords.push(...matchedWords);
+                
             }
         });
 
@@ -49,10 +51,6 @@ export default function WordSelection(onCustomPropertySaved) {
 
         console.log(foundWords);
 
-        foundWords.forEach((word, index) => {
-            customProps.add(`Tag${index + 1}`, word);
-        });
-
         await context.sync();
 
         console.log(`${matches.length} matching paragraph(s) found.`);
@@ -60,6 +58,10 @@ export default function WordSelection(onCustomPropertySaved) {
         if (onCustomPropertySaved){
             onCustomPropertySaved();
         }
+
+        return { foundWords:Array.from(foundWords)}
+        
+
     });
 
   

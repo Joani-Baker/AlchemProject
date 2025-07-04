@@ -10,7 +10,6 @@ const PopUp = ({onClose}) => {
             role="dialog"
             aria-modal="true"
             onDismiss={onClose}
-            enableAriaHiddenSiblings={true}
           >
             <Overlay onClick={onClose} />
             <FocusTrapZone>
@@ -19,7 +18,7 @@ const PopUp = ({onClose}) => {
                 <p>
                     Custom Properties have been added to this document.
                 </p>
-                <DefaultButton onClick={onClose}>Close Popup</DefaultButton>
+                <DefaultButton onClick={onClose}>Close </DefaultButton>
               </div>
             </FocusTrapZone>
           </Popup>

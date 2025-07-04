@@ -13,12 +13,15 @@ const handleTextChange = async (event) => {
   };
 
   const handleClick = async () => {
-    WordSelection(onCustomPropertySaved);
+    try{ 
+       WordSelection(onCustomPropertySaved);
+      }
+    catch(error){console.error("failed!", error);}
   };
 
   return (
     <div className= "textPromptAndInsertion">
-      <Field className="instructions"> scan the document </Field>
+      <Field className="instructions"> Scan the document for metadata </Field>
       <Button appearance="primary" size="large" className="scanButton" onClick={handleClick}>
         Scan
       </Button>

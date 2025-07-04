@@ -9,14 +9,8 @@ export default class MetadataForm extends React.Component{
         this.state = {
             category: props.metadata.category || "",
             tags: props.metadata.tags || "",
-            availableTags:[]
+                       
     };
-  }
-
-  componentDidMount(){
-    WordSelection().then((words) => {
-        this.setState({availableTags: words.foundWords});}).catch((error)=> {console.error("no doc words", error);
-        })
   }
 
   componentDidUpdate(prevProps) {
@@ -56,7 +50,7 @@ export default class MetadataForm extends React.Component{
                 selectedKey={this.state.tags}
                 onChange={(e, option)=> this.handleChange("tags", option.text)}
                 placeholder="metadata-found"
-                options={this.state.availableTags.map(word => ({ key: word, text: word }))}
+                options={this.props.avaliableTags.map(word => ({ key: word, text: word }))}
             />
                 <DefaultButton
                 className="ms-welcome__action"

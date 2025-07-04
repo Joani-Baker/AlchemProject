@@ -20,15 +20,11 @@ export default async function WordSelection(onCustomPropertySaved) {
     "unprohibited",
 ];
 
-    return Word.run(async (context) => {
+        Word.run(async (context) => {
         const paragraphs = context.document.body.paragraphs;
         paragraphs.load("items");
 
         await context.sync();
-
-        const customProps = context.document.properties.customProperties;
-        customProps.load();
-        await context.sync() 
 
         const matches = [];
         const foundWords = [];
@@ -40,30 +36,16 @@ export default async function WordSelection(onCustomPropertySaved) {
             if (matchedWords.length >0){
                 matches.push({ paragraph: para.text, index });
                 foundWords.push(...matchedWords);
-                
-            }
+                }
         });
+        const uniqueWords = Array.from(new Set(foundWords))
+         console.log(`${matches.length} matching paragraph(s) found.`);
 
-        if (matches.length === 0) {
-            console.log("No matching keywords found.");
-            return;
+        if (onCustomPropertySaved){onCustomPropertySaved(uniqueWords);
+
         }
-
-        console.log(foundWords);
-
-        await context.sync();
-
-        console.log(`${matches.length} matching paragraph(s) found.`);
-
-        if (onCustomPropertySaved){
-            onCustomPropertySaved();
-        }
-
-        return { foundWords:Array.from(foundWords)}
-        
-
-    });
-
-  
-    
+    })
 }
+
+    
+    

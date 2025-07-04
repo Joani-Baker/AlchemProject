@@ -6,6 +6,7 @@ import WordScanner from "./WordScanner";
 import "./styles.css";
 import  PopUp  from "./PopUp";
 import MetadataForm from "./MetadataForm";
+import WordSelection from "./WordSelection";
 
 
 
@@ -17,6 +18,7 @@ export default function App(){
   const[metadataChanged, setMetadataChanged] = useState(false);
   const[isloading, setIsLoading ] = useState(true);
   const[isPopupVisible, {setTrue: showPopup, setFalse: hidePopup}] = useBoolean(false);
+  const[avaliableTags, setAvaliableTags] = useState([]);
 
   useEffect(() => {
 
@@ -33,9 +35,12 @@ export default function App(){
         "contentControlSelectionChanged",
         handleDocumentChange
       );
+
+
     })
   },[]);
   const handleDocumentChange = () => {
+    WordSelection(handleCustomPropertySaved);
     setDocumentChanged(true);
   };
 
@@ -44,7 +49,11 @@ export default function App(){
     hidePopup();
   };
 
-
+    const handleCustomPropertySaved =(foundWords)=> {
+      const uniqueTags = [...new Set(foundWords)];
+      setAvaliableTags(uniqueTags);
+      
+    };
   const saveMetadata = async (newMetadata) => {
     try {
       await Word.run(async (context) => {
@@ -83,7 +92,7 @@ export default function App(){
     <div className="App"> 
       {isPopupVisible && <PopUp onClose={handleClosePopup} />}   
       <WordScanner onCustomPropertySaved= {handleDocumentChange}/>
-      <MetadataForm metadata={metadata} onSave={saveMetadata} />
+      <MetadataForm metadata={metadata} onSave={saveMetadata} avaliableTags={avaliableTags} />
     </div>
   );
 }

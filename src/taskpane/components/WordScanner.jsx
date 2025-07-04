@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState} from "react";
 import { Button,Field} from "@fluentui/react-components";
 import WordSelection from "./WordSelection";
 import PropTypes from "prop-types";
@@ -7,16 +8,15 @@ import "./styles.css"
 
 
 const WordScanner = ({onCustomPropertySaved}) => {
+  const[to, setTo] = useState("");
+  const[text, setText]= useState("");
 
 const handleTextChange = async (event) => {
     setText(event.target.value);
   };
 
   const handleClick = async () => {
-    try{ 
-       WordSelection(onCustomPropertySaved);
-      }
-    catch(error){console.error("failed!", error);}
+    await WordSelection(onCustomPropertySaved);
   };
 
   return (

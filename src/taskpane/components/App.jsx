@@ -19,6 +19,7 @@ export default function App(){
   const[isloading, setIsLoading ] = useState(true);
   const[isPopupVisible, {setTrue: showPopup, setFalse: hidePopup}] = useBoolean(false);
   const[avaliableTags, setAvaliableTags] = useState([]);
+  const[wordCount, setWordCount] = useState(0);
 
   useEffect(() => {
 
@@ -49,9 +50,11 @@ export default function App(){
     hidePopup();
   };
 
-    const handleCustomPropertySaved =(foundWords)=> {
+    const handleCustomPropertySaved =(foundWords, counter)=> {
       const uniqueTags = [...new Set(foundWords)];
+      const newWord = counter;
       setAvaliableTags(uniqueTags);
+      setWordCount(newWord);
       
     };
   const saveMetadata = async (newMetadata) => {
@@ -91,8 +94,8 @@ export default function App(){
   return (
     <div className="App"> 
       {isPopupVisible && <PopUp onClose={handleClosePopup} />}   
-      <WordScanner onCustomPropertySaved= {handleDocumentChange}/>
-      <MetadataForm metadata={metadata} onSave={saveMetadata} avaliableTags={avaliableTags} />
+      
+      <MetadataForm metadata={metadata} onSave={saveMetadata} avaliableTags={avaliableTags} wordCount={wordCount} />
     </div>
   );
 }

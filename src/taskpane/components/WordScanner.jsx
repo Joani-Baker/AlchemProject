@@ -19,6 +19,8 @@ const handleTextChange = async (event) => {
     await WordSelection(onCustomPropertySaved);
   };
 
+
+
   return (
     <div className= "textPromptAndInsertion">
       <Field className="instructions"> Scan the document for metadata </Field>

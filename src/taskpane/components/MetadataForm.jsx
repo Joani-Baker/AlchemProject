@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DefaultButton, TextField, Dropdown, IDropdownStyles } from "@fluentui/react";
-import PropTypes from "prop-types";
-import WordSelection from "./WordSelection";
+import WordDeletion from "./WordDeletion";
+import {CounterBadge, Text, Card, CardHeader, Option} from "@fluentui/react-components";
 
 export default class MetadataForm extends React.Component{
      constructor(props) {
@@ -9,6 +9,7 @@ export default class MetadataForm extends React.Component{
         this.state = {
             category: props.metadata.category || "",
             tags: props.metadata.tags || "",
+            selectedItems: []
                        
     };
   }
@@ -33,6 +34,17 @@ export default class MetadataForm extends React.Component{
     });
   }
 
+  handleDropDown = (option) =>{
+    console.log(this.state.selectedItems);
+    let selectedItems = [...this.state.selectedItems];
+    if (option.selected){
+        selectedItems.push(option.key);
+    }else{
+        selectedItems=selectedItems.filter(key => key !== option.key);
+    }
+    this.setState({selectedItems});
+    WordDeletion(selectedItems);
+  };
   render(){
 
   return(
@@ -52,13 +64,26 @@ export default class MetadataForm extends React.Component{
                 placeholder="metadata-found"
                 options={this.props.avaliableTags.map(word => ({ key: word, text: word }))}
             />
-                <DefaultButton
+            <DefaultButton
                 className="ms-welcome__action"
                 iconProps={{ iconName: "Save" }}
                 onClick={this.handleSave}
                 >
                 Save Metadata
                 </DefaultButton>
+            <Card className = "card">
+                <CardHeader header={<Text>Secure-Content</Text>}/>
+                <CounterBadge className = "wordCounter" count = {this.props.wordCount} appearance="filled" shape= "circular" side ="small"/>
+                <Dropdown 
+                    label="phrases flagged"
+                    multiSelect
+                    placeholder="delete from document"
+                    options={this.props.avaliableTags.map(tag => ({ key: tag, text: tag}))}
+                    selectedKeys = {this.state.selectedItems}
+                    onChange = {(event,option)=>this.handleDropDown(option)}
+                    >
+                    </Dropdown>
+            </Card>   
         </div>
       </div>
   )

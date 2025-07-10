@@ -25,21 +25,13 @@ export default function App(){
 
     Office.onReady(() => {
       setIsLoading(false);
-      
-
-      Office.context.document.addHandlerAsync(
-        Office.EventType.DocumentSelectionChanged,
-        handleDocumentChange
-      );
-
-      Office.context.document.addHandlerAsync(
-        "contentControlSelectionChanged",
-        handleDocumentChange
-      );
-
-
+      const timeInterval = setInterval(() => {
+        handleDocumentChange();
+      }, 15000)
+      return () => clearInterval(timeInterval); 
     })
   },[]);
+  
   const handleDocumentChange = () => {
     WordSelection(handleCustomPropertySaved);
     setDocumentChanged(true);

@@ -13,8 +13,7 @@ export default async function WordDeletion(itemsToDelete) {
         // Find where items to delete are 
         for( let i=0; i < paragraphs.items.length; i ++) {
             const para = paragraphs.items[i];
-            
-            const text = para.text.toLowerCase();
+            const text = para.text;
             console.log(itemsToDelete);
             const matchedWords = itemsToDelete.filter((word) => text.includes(word));
             matches.push({ paragraph: para.text, i });

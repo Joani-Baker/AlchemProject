@@ -35,7 +35,7 @@ export default class MetadataForm extends React.Component{
   }
 
   handleDropDown = (option) =>{
-    console.log(this.state.selectedItems);
+    console.log(option);
     let selectedItems = [...this.state.selectedItems];
     if (option.selected){
         selectedItems.push(option.key);
@@ -80,7 +80,7 @@ export default class MetadataForm extends React.Component{
                     placeholder="delete from document"
                     options={this.props.avaliableTags.map(tag => ({ key: tag, text: tag}))}
                     selectedKeys = {this.state.selectedItems}
-                    onChange = {(event,option)=>this.handleDropDown(option)}
+                    onChange = {(event,option)=> {this.handleDropDown(option)}}
                     >
                     </Dropdown>
             </Card>   

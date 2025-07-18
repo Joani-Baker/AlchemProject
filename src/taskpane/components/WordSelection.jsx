@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 async function fetchContent(word){
     try{
         const graphQlResponse = await fetch("https://graphql.demo.alchemtechnologies.com/graphql", {
@@ -62,8 +60,6 @@ export default async function WordSelection(onCustomPropertySaved) {
             foundWords.push(...matchedWords);  
       
             for(let word of matchedWords){  
-                para.load("Range");
-                await context.sync(); 
                 console.log(word);                      
                 const selectedWords = para.search(word, {matchCase: false, matchWholeWord: true});
                 console.log("calling end point");
@@ -75,11 +71,11 @@ export default async function WordSelection(onCustomPropertySaved) {
                     selectedWords.items.forEach((range) =>{
                         range.font.underline = Word.UnderlineType.single;
                         range.font.color = "green";
-                    });
-                    await context.sync();  
+                    });     
                 }
             };
         };
+        await context.sync(); 
         const uniqueWords = Array.from(new Set(foundWords))
         console.log(`${matches.length} matching paragraph(s) found.`);
         const numberOfWords = uniqueWords.length;

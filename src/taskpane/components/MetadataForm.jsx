@@ -1,91 +1,133 @@
 import * as React from "react";
-import { DefaultButton, TextField, Dropdown, IDropdownStyles } from "@fluentui/react";
+import {useState, useEffect} from "react";
 import WordDeletion from "./WordDeletion";
-import {CounterBadge, Text, Card, CardHeader, Option} from "@fluentui/react-components";
+import {CounterBadge, Card, Dropdown, Option, Text, Label,Input,Button,makeStyles,shorthands} from "@fluentui/react-components";
+import {Spinner} from "@fluentui/react/lib/Spinner";
+import "./styles.css"; 
 
-export default class MetadataForm extends React.Component{
-     constructor(props) {
-        super(props);
-        this.state = {
-            category: props.metadata.category || "",
-            tags: props.metadata.tags || "",
-            selectedItems: []
-                       
-    };
+const useStyles = makeStyles({
+  button:{
+    backgroundColor: "rgba(252, 210, 58, 1)",
+    
+  },
+  container:{
+    display:"flex",
+    justifyContent:"center",
+    alignItems: "center",
+    height: "100%",
+    width: "100%",
+    boxSizing: "border-box",
+    padding:("16px"),
+    
+},
+  metadataForm:{
+    display:"flex",
+    flexDirection: "column",
+    width: "100%",
+    maxWidth:"400px",
+    ...shorthands.borderWidth("16px", "8px"),
+    backgroundColor: "rgb(4,62,99)"
+},
+  text:{
+    textAlign: "center",
+    color:"white",
   }
+});
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.metadata !== this.props.metadata) {
-      this.setState({
-        category: this.props.metadata.category || "",
-        tags: this.props.metadata.tags || ""
-      });
-    }
-  }
+export default function MetadataForm({metadata, onSave, avaliableTags, wordCount}){
+  const[category, setCategory] = useState(metadata.category|| "");
+  const[tags, setTags] = useState(metadata.tags|| "");
+  const[selectedItems, setSelectedItems] = useState([]);
 
-  handleChange = (field, value) => {
-    this.setState({ [field]: value });
-  }
+  useEffect(() =>{
+    setCategory(metadata.category || "");
+    setTags(metadata.tags || "");
+  },[metadata] );
 
-  handleSave = () => {
-    this.props.onSave({
-      category: this.state.category,
-      tags: this.state.tags
-    });
-  }
+  const handleChange = (field, value) =>{
+    if (field === "category") setCategory(value);
+    if (field == "tags") setTags(value);
+  };
 
-  handleDropDown = (option) =>{
+  const handleSave = () =>{;
+    onSave({category, tags})
+  };
+
+  const handleDropDown = (option) =>{
     console.log(option);
-    let selectedItems = [...this.state.selectedItems];
+    let selectedItems = [... selectedItems];
     if (option.selected){
-        selectedItems.push(option.key);
+      selectedItems.push(option.key);
     }else{
         selectedItems=selectedItems.filter(key => key !== option.key);
     }
-    this.setState({selectedItems});
-    WordDeletion(selectedItems);
-  };
-  render(){
-
-  return(
-    <div className="textPromptAndInsertion">
-        <div className="metadata-form">
-            <TextField 
-                label= "Category:"
-                value={this.state.category}
-                onChange={(e, value) => this.handleChange("category",value)}
-                placeholder= "write a category"
-            />
-
-            <Dropdown
-                label="Tag"
-                selectedKey={this.state.tags}
-                onChange={(e, option)=> this.handleChange("tags", option.text)}
-                placeholder="metadata-found"
-                options={this.props.avaliableTags.map(word => ({ key: word, text: word }))}
-            />
-            <DefaultButton
-                className="ms-welcome__action"
-                iconProps={{ iconName: "Save" }}
-                onClick={this.handleSave}
-                >
-                Save Metadata
-                </DefaultButton>
-            <Card className = "card">
-                <CardHeader header={<Text>Secure-Content</Text>}/>
-                <CounterBadge className = "wordCounter" count = {this.props.wordCount} appearance="filled" shape= "circular" side ="small"/>
-                <Dropdown 
-                    label="phrases flagged"
-                    multiSelect
-                    placeholder="delete from document"
-                    options={this.props.avaliableTags.map(tag => ({ key: tag, text: tag}))}
-                    selectedKeys = {this.state.selectedItems}
-                    onChange = {(event,option)=> {this.handleDropDown(option)}}
-                    >
-                    </Dropdown>
-            </Card>   
-        </div>
-      </div>
-  )
+    setSelectedItems(selectedItems);
+    WordDeletion(selectedItems);    
 }
+
+const styles = useStyles();
+
+return(
+  <div className={styles.container}>
+    <Card className={styles.metadataForm}>
+      <Text className = {styles.text}> Detecting Metadata</Text>
+      <Label className = {styles.text} htmlFor="catTextarea">Category</Label>
+      <Input
+        id="catTextarea"
+        value={category}
+        onChange={(e) => handleChange("category", e.target.value)}
+        placeholder="Category Input"
+        />
+      <label className = {styles.text}>Tag</label>
+      <Dropdown 
+        placeholder="Tag document"
+        selectedOptions={[tags]}
+        onOptionSelect={(event, data) => {
+          handleChange("tags", data.optionValue);
+        }}
+        >
+          {avaliableTags.map(tag => (
+            <Option key={tag} value={tag}>
+              {tag}
+            </Option>
+          ))}
+        </Dropdown>
+      <Button
+        className={styles.button}
+        onClick={handleSave}>
+          Save Metadata
+        </Button>
+      <Text className={styles.text}>Sensitivities</Text>
+      <CounterBadge count={wordCount} shape="circular" side="small" />
+      {!wordCount && <Spinner label="Finding Sensitivies ..."/>}
+      <label className = {styles.text}> Phrases flagged</label>
+      <Dropdown
+        multiSelect={true}
+        placeholder="delete from document"
+        selectedOptions={selectedItems}
+        onOptionSelect={(event, data) => {
+          const key = data.optionValue;
+          const isSelected = selectedItems.includes(key);
+          if(key === "deleteAll"){
+            const allKeys = avaliableTags.map(tag=>tag);
+            setSelectedItems(allKeys);
+            WordDeletion(allKeys);     
+          } else{
+            const updated = isSelected
+            ? selectedItems.filter(k =>k !== key):[...selectedItems,key];
+            setSelectedItems(updated);
+            WordDeletion(updated);
+          }
+        }}
+      >
+      <Option value="deleteAll">Delete All</Option>
+        {avaliableTags.map(tag => (
+        <Option key={tag} value={tag}>
+          {tag}
+        </Option>
+        ))}
+      </Dropdown>
+    </Card>
+  </div>
+);
 }

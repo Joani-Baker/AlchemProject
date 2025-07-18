@@ -1,14 +1,11 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import { useState, useEffect} from "react";
 import {useBoolean} from '@fluentui/react-hooks';
-import WordScanner from "./WordScanner";
 import "./styles.css";
 import  PopUp  from "./PopUp";
 import MetadataForm from "./MetadataForm";
 import WordSelection from "./WordSelection";
-
-
+import {Spinner} from "@fluentui/react/lib/Spinner";
 
 export default function App(){
   
@@ -31,7 +28,7 @@ export default function App(){
       return () => clearInterval(timeInterval); 
     })
   },[]);
-  
+
   const handleDocumentChange = () => {
     WordSelection(handleCustomPropertySaved);
     setDocumentChanged(true);
@@ -85,8 +82,7 @@ export default function App(){
 
   return (
     <div className="App"> 
-      {isPopupVisible && <PopUp onClose={handleClosePopup} />}   
-      
+      {isPopupVisible && <PopUp onClose={handleClosePopup} conditionMet={saveMetadata}/>}   
       <MetadataForm metadata={metadata} onSave={saveMetadata} avaliableTags={avaliableTags} wordCount={wordCount} />
     </div>
   );

@@ -19,24 +19,18 @@ export default async function WordDeletion(itemsToDelete) {
             matches.push({ paragraph: para.text, i });
             foundWords.push(...matchedWords);  
       
-            for(let word of matchedWords){  
-                para.load("Range");
-                await context.sync();                       
+            for(let word of matchedWords){                        
                 const selectedWords = para.search(word, {matchCase: false, matchWholeWord: true});
                 
                 selectedWords.load("items");
                 await context.sync();
                 selectedWords.items.forEach((item) =>{
                     item.delete();
-                    });
-                await context.sync();
-
+                });
             };
-
         };
-
-        }
-    );
+        await context.sync();
+    });
 }
 
     

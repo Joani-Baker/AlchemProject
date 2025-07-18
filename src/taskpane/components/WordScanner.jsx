@@ -8,18 +8,10 @@ import "./styles.css"
 
 
 const WordScanner = ({onCustomPropertySaved}) => {
-  const[to, setTo] = useState("");
-  const[text, setText]= useState("");
-
-const handleTextChange = async (event) => {
-    setText(event.target.value);
-  };
 
   const handleClick = async () => {
     await WordSelection(onCustomPropertySaved);
   };
-
-
 
   return (
     <div className= "textPromptAndInsertion">
@@ -28,8 +20,6 @@ const handleTextChange = async (event) => {
         Scan
       </Button>
     </div>
-
-
   );
 };
 

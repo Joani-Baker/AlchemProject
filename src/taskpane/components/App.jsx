@@ -6,6 +6,8 @@ import  PopUp  from "./PopUp";
 import MetadataForm from "./MetadataForm";
 import WordSelection from "./WordSelection";
 import {Spinner} from "@fluentui/react/lib/Spinner";
+import WordAccum from "./WordAccum";
+import TextInsertion from "./TextInsertion";
 
 export default function App(){
   
@@ -17,20 +19,32 @@ export default function App(){
   const[isPopupVisible, {setTrue: showPopup, setFalse: hidePopup}] = useBoolean(false);
   const[avaliableTags, setAvaliableTags] = useState([]);
   const[wordCount, setWordCount] = useState(0);
+  const[wordFrequency, setWordFrequency] = useState([]);
+
 
   useEffect(() => {
-
     Office.onReady(() => {
       setIsLoading(false);
-      const timeInterval = setInterval(() => {
-        handleDocumentChange();
-      }, 15000)
-      return () => clearInterval(timeInterval); 
-    })
-  },[]);
+      const timeInterval = setInterval (() => {
+        handleDocumentChange()
+      },15000)
+      return () => clearInterval(timeInterval);
+      })
+    },[]);
+    
 
-  const handleDocumentChange = () => {
+
+  const handleDocumentChange = async () => {
     WordSelection(handleCustomPropertySaved);
+    try{
+      const frequencyW = await WordAccum();
+      const formatted = frequencyW.map(([word, count]) => ({word,count}));
+      console.log(formatted);
+      setWordFrequency(formatted);
+      console.log(wordFrequency);
+    }catch(error){
+      console.log("not reached wordaccum", error);
+    }
     setDocumentChanged(true);
   };
 
@@ -83,7 +97,8 @@ export default function App(){
   return (
     <div className="App"> 
       {isPopupVisible && <PopUp onClose={handleClosePopup} conditionMet={saveMetadata}/>}   
-      <MetadataForm metadata={metadata} onSave={saveMetadata} avaliableTags={avaliableTags} wordCount={wordCount} />
+      <MetadataForm metadata={metadata} onSave={saveMetadata} avaliableTags={avaliableTags} wordCount={wordCount} wordFrequency={wordFrequency}/>
+      
     </div>
   );
 }

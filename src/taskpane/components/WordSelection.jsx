@@ -77,7 +77,6 @@ export default async function WordSelection(onCustomPropertySaved) {
         };
         await context.sync(); 
         const uniqueWords = Array.from(new Set(foundWords))
-        console.log(`${matches.length} matching paragraph(s) found.`);
         const numberOfWords = uniqueWords.length;
 
         if (onCustomPropertySaved){onCustomPropertySaved(uniqueWords, numberOfWords);

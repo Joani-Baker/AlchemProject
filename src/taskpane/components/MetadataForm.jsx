@@ -4,6 +4,7 @@ import WordDeletion from "./WordDeletion";
 import {CounterBadge, Card, Dropdown, Option, Text, Label,Input,Button,makeStyles,shorthands} from "@fluentui/react-components";
 import {Spinner} from "@fluentui/react/lib/Spinner";
 import "./styles.css"; 
+import HeaderInsertion from "./HeaderInsertion";
 
 const useStyles = makeStyles({
   button:{
@@ -31,10 +32,14 @@ const useStyles = makeStyles({
   text:{
     textAlign: "center",
     color:"white",
+},
+  text2:{
+    textAlign: "center",
+    color:"dark blue",
   }
 });
 
-export default function MetadataForm({metadata, onSave, avaliableTags, wordCount}){
+export default function MetadataForm({metadata, onSave, avaliableTags, wordCount, wordFrequency}){
   const[category, setCategory] = useState(metadata.category|| "");
   const[tags, setTags] = useState(metadata.tags|| "");
   const[selectedItems, setSelectedItems] = useState([]);
@@ -49,8 +54,19 @@ export default function MetadataForm({metadata, onSave, avaliableTags, wordCount
     if (field == "tags") setTags(value);
   };
 
-  const handleSave = () =>{;
-    onSave({category, tags})
+  const handleSave = () =>{
+        onSave({category, tags})
+  };
+
+  const handleInsertion = async() => {
+    console.log("func has been called")
+    try{
+      console.log("try bracket");
+      await HeaderInsertion();
+      console.log("func completed");
+    }catch(error){
+      console.error("Error inserting header", error);
+    }
   };
 
   const handleDropDown = (option) =>{
@@ -63,7 +79,7 @@ export default function MetadataForm({metadata, onSave, avaliableTags, wordCount
     }
     setSelectedItems(selectedItems);
     WordDeletion(selectedItems);    
-}
+};
 
 const styles = useStyles();
 
@@ -90,6 +106,11 @@ return(
             <Option key={tag} value={tag}>
               {tag}
             </Option>
+          ))}
+          {wordFrequency.map((item, index) => (
+            <Option key={index}>
+              {item.word}
+              </Option>
           ))}
         </Dropdown>
       <Button
@@ -127,6 +148,16 @@ return(
         </Option>
         ))}
       </Dropdown>
+      <Card>
+      <Text className={styles.text2}>Most frequent</Text>
+      {wordFrequency.map((item, index) => (
+      <Text className={styles.text2} key={index}>
+        {item.word}: {item.count}</Text>
+      ))}
+      </Card>
+      <Button appearance="primary" disabled={false} onClick={handleInsertion}>
+          Insert CUI Marking
+          </Button>
     </Card>
   </div>
 );
